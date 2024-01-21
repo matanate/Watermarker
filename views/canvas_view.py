@@ -163,8 +163,7 @@ class CanvasView(ctk.CTkFrame):
             )
 
     def update_image(self):
-        with Image.open(self.pil_img_path) as image:
-            self.pil_img = image.convert("RGBA")
+        self.pil_img = self.original_pil_img.copy()
         # Define the variables
         opacity = int(self.properties.opacity.get() * 255 / 100)
         rotation = self.properties.rotation.get()
@@ -221,6 +220,8 @@ class CanvasView(ctk.CTkFrame):
         if is_text:
             self.update_text_image()
         else:
+            with Image.open(self.pil_img_path) as image:
+                self.original_pil_img = image.convert("RGBA")
             self.update_image()
 
     def remove_watermark(self):
