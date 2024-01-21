@@ -1,8 +1,9 @@
 # Standard library imports
 from tkinter import filedialog, messagebox
+import os
 
 # Third-party library imports
-import customtkinter as ctk
+from customtkinter import CTkFrame, CTkImage, CTkLabel, CTkButton
 from PIL import Image
 from tkinterdnd2 import DND_FILES
 
@@ -11,9 +12,9 @@ from utils import *
 from views import CanvasView
 
 
-class MainView(ctk.CTkFrame):
+class MainView(CTkFrame):
     def __init__(self, parent, switch_view, *args, **kwargs):
-        ctk.CTkFrame.__init__(self, parent, *args, **kwargs)
+        CTkFrame.__init__(self, parent, *args, **kwargs)
         self.switch_view = switch_view
         self.parent = parent
 
@@ -21,45 +22,16 @@ class MainView(ctk.CTkFrame):
         self.screen_h = self.parent.winfo_height()
 
         # Initiate Logo
-        with Image.open("resources\images\logo.ico") as pil_img:
-            img_dim = int((self.screen_h / 2) * 0.8)
-            pil_img.resize((img_dim, img_dim))
-            self.logo_img = ctk.CTkImage(
-                light_image=pil_img, dark_image=pil_img, size=(img_dim, img_dim)
-            )
-        self.logo = ctk.CTkLabel(self, image=self.logo_img, text=None)
-        self.logo.pack(pady=((self.screen_h / 2) - img_dim) / 2)
+        self.initiate_logo()
 
-        # Initiate Text
-        self.text_label = ctk.CTkLabel(
-            self,
-            text="Add Watermark",
-            font=("Open Sans", 30),
-            text_color=WHITE,
-        )
-        self.text_label.pack(pady=20)
+        # Initiate Add Watermark Text
+        self.initiate_add_watermak_text()
 
         # Initialize Button
-        self.button = ctk.CTkButton(
-            self,
-            fg_color=TURQUOISE,
-            hover_color=DARK_TURQUOISE,
-            text="Add File",
-            font=("Open Sans", 25, "bold"),
-            width=150,
-            height=50,
-            command=self.get_button_img,
-        )
-        self.button.pack()
+        self.initiate_button()
 
-        # Initiate Text
-        self.text_label1 = ctk.CTkLabel(
-            self,
-            text="or drag file here",
-            font=("Open Sans", 15),
-            text_color=WHITE,
-        )
-        self.text_label1.pack()
+        # Initiate drag Text
+        self.initiate_drag_text()
 
         # Bind the drag and drop events
         self.drop_target_register(DND_FILES)
@@ -71,16 +43,13 @@ class MainView(ctk.CTkFrame):
         self.process_img_url(file_path)
 
     def get_button_img(self):
-        file_path = filedialog.askopenfilename(
-            initialdir="/",
-            title="Select img",
-            filetypes=(
-                ("PNG files", "*.png"),
-                ("BMP files", "*.bmp"),
-                ("JPEG files", "*.jpeg"),
-                ("All files", "*.*"),
-            ),
+        FILE_TYPES = (
+            ("PNG files", "*.png"),
+            ("BMP files", "*.bmp"),
+            ("JPEG files", "*.jpeg"),
+            ("All files", "*.*"),
         )
+        file_path = filedialog.askopenfilename(title="Select img", filetypes=FILE_TYPES)
         if file_path:
             self.process_img_url(file_path)
 
@@ -96,3 +65,45 @@ class MainView(ctk.CTkFrame):
 
         except Exception as e:
             messagebox.showerror(title="Error loading image", message=e)
+
+    def initiate_logo(self):
+        logo_path = os.path.join("resources", "images", "logo.ico")
+        with Image.open(logo_path) as pil_img:
+            img_dim = int((self.screen_h / 2) * 0.8)
+            pil_img.resize((img_dim, img_dim))
+            self.logo_img = CTkImage(
+                light_image=pil_img, dark_image=pil_img, size=(img_dim, img_dim)
+            )
+        self.logo = CTkLabel(self, image=self.logo_img, text=None)
+        self.logo.pack(pady=((self.screen_h / 2) - img_dim) / 2)
+
+    def initiate_add_watermak_text(self):
+        self.text_label = CTkLabel(
+            self,
+            text="Add Watermark",
+            font=("Open Sans", 30),
+            text_color=WHITE,
+        )
+        self.text_label.pack(pady=20)
+
+    def initiate_button(self):
+        self.button = CTkButton(
+            self,
+            fg_color=TURQUOISE,
+            hover_color=DARK_TURQUOISE,
+            text="Add File",
+            font=("Open Sans", 25, "bold"),
+            width=150,
+            height=50,
+            command=self.get_button_img,
+        )
+        self.button.pack()
+
+    def initiate_drag_text(self):
+        self.drag_text = CTkLabel(
+            self,
+            text="or drag file here",
+            font=("Open Sans", 15),
+            text_color=WHITE,
+        )
+        self.drag_text.pack()

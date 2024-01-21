@@ -1,7 +1,7 @@
 # Standard library imports
 
 # Third-party library imports
-import customtkinter as ctk
+from customtkinter import CTk, set_appearance_mode
 from tkinterdnd2 import TkinterDnD
 
 # Local imports
@@ -9,13 +9,13 @@ from utils import DARK, switch_view
 from views import MainView
 
 
-class MainApplication(ctk.CTk, TkinterDnD.DnDWrapper):
+class MainApplication(CTk, TkinterDnD.DnDWrapper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.TkdndVersion = TkinterDnD._require(self)
 
         # Initialize the appearance mode to "dark"
-        ctk.set_appearance_mode("dark")
+        set_appearance_mode("dark")
 
         self.current_view = None
 
